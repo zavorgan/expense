@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_complete_guide/widgets/chart_bar.dart';
 import 'package:intl/intl.dart';
+// import 'package:intl/date_symbol_data_local.dart';
 
 import '../models/transaction.dart';
 import './chart_bar.dart';
 import '../widgets/chart_bar.dart';
+
+// initializeDateFormatting('pt_BR', null);
+
+// Intl.defaultLocale = "ru_RU";
 
 class Chart extends StatelessWidget {
   final List<Transaction> recentTransactions;
@@ -30,11 +35,12 @@ class Chart extends StatelessWidget {
         'day': DateFormat.E().format(weekDay).substring(0, 1),
         'amount': totalSum,
       };
-    });
+    }).reversed.toList();
   }
 
   double get totalSpending {
     return groupedTransactionValues.fold(0.0, (sum, item) {
+      //в скобках начальное значение, перременная которая содежит и третьезначение которое извлекаем
       return sum + item['amount'];
     });
   }
@@ -47,14 +53,17 @@ class Chart extends StatelessWidget {
       child: Padding(
         padding: EdgeInsets.all(10),
         child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          mainAxisAlignment: MainAxisAlignment
+              .spaceAround, //выравнивание в колонке по главной оси
           children: groupedTransactionValues.map((data) {
             return Flexible(
-              fit: FlexFit.tight,
+              fit: FlexFit
+                  .tight, //обернули в контейнер флекс с одинаковым пространством
               child: ChartBar(
                 data['day'],
                 data['amount'],
-                totalSpending == 0.0
+                totalSpending ==
+                        0.0 //проверка есть ли вообще транзакции, если нет то 0.0 иначе
                     ? 0.0
                     : (data['amount'] as double) / totalSpending,
               ),
