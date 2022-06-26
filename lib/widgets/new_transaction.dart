@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function addTx;
@@ -6,28 +7,55 @@ class NewTransaction extends StatefulWidget {
   NewTransaction(this.addTx);
 
   @override
-  State<NewTransaction> createState() => _NewTransactionState();
+  _NewTransactionState createState() => _NewTransactionState();
 }
 
 class _NewTransactionState extends State<NewTransaction> {
-  final titleController = TextEditingController();
+  //новая транзакция
+  final _titleController =
+      TextEditingController(); //переменная для названия расхода
+  final _amountController =
+      TextEditingController(); //переменная для потраченной суммы
+  DateTime _selectedDate;
 
-  final amountController = TextEditingController();
+  void _submitData() {
+    if (_amountController.text.isEmpty) {
+      return;
+    }
+    final enteredTitle = _titleController.text;
+    final enterdAmount = double.parse(_amountController.text);
 
-  void submitData() {
-    final enteredTitle = titleController.text;
-    final enterdAmount = double.parse(amountController.text);
-
-    if (enteredTitle.isEmpty || enterdAmount <= 0) {
+    if (enteredTitle.isEmpty || enterdAmount <= 0 || _selectedDate == null) {
+      //проверяем на пустые поля введеные в транзакцию
       return;
     }
 
     widget.addTx(
       enteredTitle,
       enterdAmount,
+      _selectedDate,
     );
 
     Navigator.of(context).pop();
+  }
+
+  void _presentDatePicker() {
+    showDatePicker(
+            //показать выбор даты
+            context: context, //инфа из контекста
+            initialDate: DateTime.now(), //начальная дата по умолчанию
+            firstDate: DateTime(
+                2022), //когда начинается выбор даты (с 1 января 2022 года(можно более точно указать))
+            lastDate: DateTime.now()) //конечная дата выбора (сегодня)
+        .then((pickedDate) {
+      if (pickedDate == null) {
+        return;
+      }
+      setState(() {
+        // иизменить состояние виджета нужно запустить сетстате
+        _selectedDate = pickedDate;
+      });
+    });
   }
 
   @override
@@ -41,23 +69,52 @@ class _NewTransactionState extends State<NewTransaction> {
           children: <Widget>[
             TextField(
               decoration: InputDecoration(labelText: 'Title'),
-              controller: titleController,
-              onSubmitted: (_) => submitData(),
+              controller: _titleController,
+              onSubmitted: (_) => _submitData(),
               // onChanged: (val) {
               //   titleInput = val;
               // },
             ),
             TextField(
               decoration: InputDecoration(labelText: 'Amount'),
-              controller: amountController,
+              controller: _amountController,
               keyboardType: TextInputType.number,
-              onSubmitted: (_) => submitData(),
+              onSubmitted: (_) => _submitData(),
               // onChanged: (val) => amountInput = val,
             ),
+            Container(
+              height: 80, //отступы
+              child: Row(
+                //ряд
+                children: [
+                  Expanded(
+                    child: Text(
+                      _selectedDate == null
+                          ? 'No Date Chosen!'
+                          : DateFormat.yMd().format(_selectedDate),
+                    ),
+                  ), //текстовое поле
+                  FlatButton(
+                    //Ктопка вызова календаря
+                    textColor:
+                        Theme.of(context).primaryColor, //стиль по умолчанию
+                    onPressed: _presentDatePicker,
+                    child: Text(
+                      'Choose Date',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+            ),
             FlatButton(
-              child: Text('Add Transaction'),
-              textColor: Colors.purple,
-              onPressed: submitData,
+              child: Text(
+                'Add Transaction',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              color: Theme.of(context).primaryColor,
+              textColor: Theme.of(context).textTheme.button.color,
+              onPressed: _submitData,
             ),
           ],
         ),
