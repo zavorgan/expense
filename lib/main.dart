@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_complete_guide/widgets/chart.dart';
 
 import './models/transaction.dart';
@@ -6,7 +7,20 @@ import './widgets/new_transaction.dart';
 import './widgets/transaction_list.dart';
 import './widgets/chart.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  //
+  //отключение горизонтального экрана
+  //
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  //   DeviceOrientation.portraitDown,
+  // ]);
+  //
+  runApp(MyApp());
+}
+
+// void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
   @override
@@ -67,6 +81,8 @@ class _MyHomePageState extends State<MyHomePage> {
     // ),
   ];
 
+  bool _showChart = false;
+
   List<Transaction> get _recentTransactions {
     //переменная последние транзакции
     return _userTransactions.where((tx) {
@@ -116,29 +132,60 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Personal Expenses',
-          // style: TextStyle(
-          //   fontFamily: 'Open Sans',
-          // ),
-        ),
-        actions: <Widget>[
-          IconButton(
-            onPressed: () => _startAddNewTransaction(context),
-            icon: Icon(Icons.add),
-          )
-        ],
+    final appBar = AppBar(
+      title: Text(
+        'Personal Expenses',
+        // style: TextStyle(
+        //   fontFamily: 'Open Sans',
+        // ),
       ),
+      actions: <Widget>[
+        IconButton(
+          onPressed: () => _startAddNewTransaction(context),
+          icon: Icon(Icons.add),
+        )
+      ],
+    );
+
+    return Scaffold(
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           // mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Chart(_recentTransactions), //передаем чарт за последнюю неделю
-            TransacionList(
-                _userTransactions, _deleteTransaction), //передаем все тразации
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text('Show Chart'),
+                Switch(
+                  value: _showChart,
+                  onChanged: (val) {
+                    setState(() {
+                      _showChart = val;
+                    });
+                  },
+                ),
+              ],
+            ),
+            _showChart
+                ? Container(
+                    //высота = запрос размера экрана - аппбар - строка состояния(системная панель) и делить на процент
+                    height: (MediaQuery.of(context).size.height -
+                            appBar.preferredSize.height -
+                            MediaQuery.of(context).padding.top) *
+                        0.3,
+                    child: Chart(_recentTransactions))
+                : //передаем чарт за последнюю неделю
+                Container(
+                    //высота = запрос размера экрана - аппбар - строка состояния(системная панель) и делить на процент
+                    height: (MediaQuery.of(context).size.height -
+                            appBar.preferredSize.height -
+                            MediaQuery.of(context).padding.top) *
+                        0.7,
+                    child:
+                        TransacionList(_userTransactions, _deleteTransaction),
+                  ), //передаем все тразации
           ],
         ),
       ),
