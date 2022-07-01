@@ -13,23 +13,26 @@ class TransacionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return transactions.isEmpty //если пустой выводим первое условие
-        ? Column(
-            children: [
-              Text(
-                'No transaction',
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                height: 200,
-                child: Image.asset(
-                  'assets/images/waiting.png',
-                  fit: BoxFit.cover,
+        ? LayoutBuilder(builder: (ctx, constraints) {
+            //ипользуем допустимы размер
+            return Column(
+              children: [
+                Text(
+                  'No transaction',
                 ),
-              ),
-            ],
-          )
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  height: constraints.maxHeight * 0.6,
+                  child: Image.asset(
+                    'assets/images/waiting.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ],
+            );
+          })
         : ListView.builder(
             //иначе выводим список транзакций
             itemBuilder: (ctx, index) {
