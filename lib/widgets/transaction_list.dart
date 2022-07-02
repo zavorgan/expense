@@ -13,23 +13,25 @@ class TransacionList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return transactions.isEmpty //если пустой выводим первое условие
-        ? Column(
-            children: [
-              Text(
-                'No transaction',
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                height: 200,
-                child: Image.asset(
-                  'assets/images/waiting.png',
-                  fit: BoxFit.cover,
+        ? LayoutBuilder(builder: (ctx, constraints) {
+            return Column(
+              children: [
+                Text(
+                  'No transaction',
                 ),
-              ),
-            ],
-          )
+                SizedBox(
+                  height: 10,
+                ),
+                Container(
+                  height: constraints.maxHeight * 0.6,
+                  child: Image.asset(
+                    'assets/images/waiting.png',
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ],
+            );
+          })
         : ListView.builder(
             //иначе выводим список транзакций
             itemBuilder: (ctx, index) {
@@ -52,12 +54,26 @@ class TransacionList extends StatelessWidget {
                   subtitle: Text(
                     DateFormat.yMMMd().format(transactions[index].date),
                   ),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    color: Theme.of(context).errorColor,
-                    onPressed: () => deleteTx(transactions[index]
-                        .id), // передаются значения, поэтому передаем через анонимную функцию
-                  ),
+                  trailing: MediaQuery.of(context).size.width > 360
+                      ? FlatButton.icon(
+                          onPressed: () => deleteTx(transactions[index].id),
+                          label: Text(
+                            'Delete',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          textColor: Theme.of(context).errorColor,
+                          icon: Icon(
+                            Icons.delete,
+                          ),
+                        )
+                      : IconButton(
+                          icon: Icon(Icons.delete),
+                          color: Theme.of(context).errorColor,
+                          onPressed: () => deleteTx(transactions[index]
+                              .id), // передаются значения, поэтому передаем через анонимную функцию
+                        ),
                 ),
               );
             },

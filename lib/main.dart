@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_complete_guide/widgets/chart.dart';
+import 'package:expense/widgets/chart.dart';
 
 import './models/transaction.dart';
 import './widgets/new_transaction.dart';
@@ -132,6 +132,8 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+    final mediaQuery = MediaQuery.of(context);
+    final isLandscape = mediaQuery.orientation == Orientation.landscape;
     final appBar = AppBar(
       title: Text(
         'Personal Expenses',
@@ -146,6 +148,14 @@ class _MyHomePageState extends State<MyHomePage> {
         )
       ],
     );
+    final txWidget = Container(
+      //высота = запрос размера экрана - аппбар - строка состояния(системная панель) и делить на процент
+      height: (MediaQuery.of(context).size.height -
+              appBar.preferredSize.height -
+              MediaQuery.of(context).padding.top) *
+          0.7,
+      child: TransacionList(_userTransactions, _deleteTransaction),
+    );
 
     return Scaffold(
       appBar: appBar,
@@ -154,38 +164,46 @@ class _MyHomePageState extends State<MyHomePage> {
           // mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text('Show Chart'),
-                Switch(
-                  value: _showChart,
-                  onChanged: (val) {
-                    setState(() {
-                      _showChart = val;
-                    });
-                  },
-                ),
-              ],
-            ),
-            _showChart
-                ? Container(
-                    //высота = запрос размера экрана - аппбар - строка состояния(системная панель) и делить на процент
-                    height: (MediaQuery.of(context).size.height -
-                            appBar.preferredSize.height -
-                            MediaQuery.of(context).padding.top) *
-                        0.3,
-                    child: Chart(_recentTransactions))
-                : //передаем чарт за последнюю неделю
-                Container(
-                    //высота = запрос размера экрана - аппбар - строка состояния(системная панель) и делить на процент
-                    height: (MediaQuery.of(context).size.height -
-                            appBar.preferredSize.height -
-                            MediaQuery.of(context).padding.top) *
-                        0.7,
-                    child:
-                        TransacionList(_userTransactions, _deleteTransaction),
-                  ), //передаем все тразации
+            if (isLandscape)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text('Show Chart'),
+                  Switch.adaptive(
+                    value: _showChart,
+                    onChanged: (val) {
+                      setState(() {
+                        _showChart = val;
+                      });
+                    },
+                  ),
+                ],
+              ),
+            //если не горизонт отобразть
+            if (!isLandscape)
+              Container(
+                //высота = запрос размера экрана - аппбар - строка состояния(системная панель) и делить на процент
+                height: (mediaQuery.size.height -
+                        appBar.preferredSize.height -
+                        mediaQuery.padding.top) *
+                    0.3,
+                child: Chart(_recentTransactions),
+              ),
+            //если не горизонт отобразть
+            if (!isLandscape) txWidget,
+            //если горизонт отобразть
+            if (isLandscape)
+              _showChart
+                  ? Container(
+                      //высота = запрос размера экрана - аппбар - строка состояния(системная панель) и делить на процент
+                      height: (mediaQuery.size.height -
+                              appBar.preferredSize.height -
+                              mediaQuery.padding.top) *
+                          0.7,
+                      child: Chart(_recentTransactions),
+                    )
+                  : txWidget, //передаем чарт за последнюю неделю
+            //передаем все тразации
           ],
         ),
       ),

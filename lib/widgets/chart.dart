@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_complete_guide/widgets/chart_bar.dart';
+import 'package:expense/widgets/chart_bar.dart';
 import 'package:intl/intl.dart';
 // import 'package:intl/date_symbol_data_local.dart';
 
