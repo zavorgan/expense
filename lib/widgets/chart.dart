@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_complete_guide/widgets/chart_bar.dart';
+import 'package:expense/widgets/chart_bar.dart';
 import 'package:intl/intl.dart';
 // import 'package:intl/date_symbol_data_local.dart';
 
@@ -14,7 +14,9 @@ import '../widgets/chart_bar.dart';
 class Chart extends StatelessWidget {
   final List<Transaction> recentTransactions;
 
-  Chart(this.recentTransactions);
+  Chart(this.recentTransactions) {
+    print('Constructor Chart');
+  }
 
   List<Map<String, Object>> get groupedTransactionValues {
     return List.generate(7, (index) {
@@ -47,6 +49,7 @@ class Chart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('build() Chart');
     return Card(
       elevation: 6,
       margin: EdgeInsets.all(10),

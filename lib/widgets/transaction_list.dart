@@ -12,9 +12,13 @@ class TransacionList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('build() TansactionList');
     return transactions.isEmpty //если пустой выводим первое условие
         ? LayoutBuilder(builder: (ctx, constraints) {
+<<<<<<< HEAD
             //ипользуем допустимы размер
+=======
+>>>>>>> 875169b011c4b786d9d054c2bb1c48d05beedc2a
             return Column(
               children: [
                 Text(
@@ -55,12 +59,26 @@ class TransacionList extends StatelessWidget {
                   subtitle: Text(
                     DateFormat.yMMMd().format(transactions[index].date),
                   ),
-                  trailing: IconButton(
-                    icon: Icon(Icons.delete),
-                    color: Theme.of(context).errorColor,
-                    onPressed: () => deleteTx(transactions[index]
-                        .id), // передаются значения, поэтому передаем через анонимную функцию
-                  ),
+                  trailing: MediaQuery.of(context).size.width > 360
+                      ? FlatButton.icon(
+                          onPressed: () => deleteTx(transactions[index].id),
+                          label: Text(
+                            'Delete',
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          textColor: Theme.of(context).errorColor,
+                          icon: Icon(
+                            Icons.delete,
+                          ),
+                        )
+                      : IconButton(
+                          icon: Icon(Icons.delete),
+                          color: Theme.of(context).errorColor,
+                          onPressed: () => deleteTx(transactions[index]
+                              .id), // передаются значения, поэтому передаем через анонимную функцию
+                        ),
                 ),
               );
             },

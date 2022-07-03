@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_complete_guide/widgets/chart.dart';
+import 'package:expense/widgets/chart.dart';
 
 import './models/transaction.dart';
 import './widgets/new_transaction.dart';
@@ -132,9 +132,15 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
+<<<<<<< HEAD
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
 
+=======
+    print('build() MyHomePageState');
+    final mediaQuery = MediaQuery.of(context);
+    final isLandscape = mediaQuery.orientation == Orientation.landscape;
+>>>>>>> 875169b011c4b786d9d054c2bb1c48d05beedc2a
     final appBar = AppBar(
       title: Text(
         'Personal Expenses',
@@ -148,6 +154,14 @@ class _MyHomePageState extends State<MyHomePage> {
           icon: Icon(Icons.add),
         )
       ],
+    );
+    final txWidget = Container(
+      //высота = запрос размера экрана - аппбар - строка состояния(системная панель) и делить на процент
+      height: (MediaQuery.of(context).size.height -
+              appBar.preferredSize.height -
+              MediaQuery.of(context).padding.top) *
+          0.7,
+      child: TransacionList(_userTransactions, _deleteTransaction),
     );
 
     final txListWidget = Container(
@@ -171,7 +185,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text('Show Chart'),
+<<<<<<< HEAD
                   Switch(
+=======
+                  Switch.adaptive(
+>>>>>>> 875169b011c4b786d9d054c2bb1c48d05beedc2a
                     value: _showChart,
                     onChanged: (val) {
                       setState(() {
@@ -181,6 +199,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ],
               ),
+<<<<<<< HEAD
             if (!isLandscape)
               Container(
                 //высота = запрос размера экрана - аппбар - строка состояния(системная панель) и делить на процент
@@ -191,10 +210,26 @@ class _MyHomePageState extends State<MyHomePage> {
                 child: Chart(_recentTransactions),
               ),
             if (!isLandscape) txListWidget,
+=======
+            //если не горизонт отобразть
+            if (!isLandscape)
+              Container(
+                //высота = запрос размера экрана - аппбар - строка состояния(системная панель) и делить на процент
+                height: (mediaQuery.size.height -
+                        appBar.preferredSize.height -
+                        mediaQuery.padding.top) *
+                    0.3,
+                child: Chart(_recentTransactions),
+              ),
+            //если не горизонт отобразть
+            if (!isLandscape) txWidget,
+            //если горизонт отобразть
+>>>>>>> 875169b011c4b786d9d054c2bb1c48d05beedc2a
             if (isLandscape)
               _showChart
                   ? Container(
                       //высота = запрос размера экрана - аппбар - строка состояния(системная панель) и делить на процент
+<<<<<<< HEAD
                       height: (MediaQuery.of(context).size.height -
                               appBar.preferredSize.height -
                               MediaQuery.of(context).padding.top) *
@@ -211,6 +246,16 @@ class _MyHomePageState extends State<MyHomePage> {
             //     child:
             //         TransacionList(_userTransactions, _deleteTransaction),
             //   ), //передаем все тразации
+=======
+                      height: (mediaQuery.size.height -
+                              appBar.preferredSize.height -
+                              mediaQuery.padding.top) *
+                          0.7,
+                      child: Chart(_recentTransactions),
+                    )
+                  : txWidget, //передаем чарт за последнюю неделю
+            //передаем все тразации
+>>>>>>> 875169b011c4b786d9d054c2bb1c48d05beedc2a
           ],
         ),
       ),

@@ -6,10 +6,11 @@ class ChartBar extends StatelessWidget {
   final double spendingAmount; //сумма за день
   final double spendingPctOfTotal; //процент от вей суммы
 
-  ChartBar(this.label, this.spendingAmount, this.spendingPctOfTotal);
+  const ChartBar(this.label, this.spendingAmount, this.spendingPctOfTotal);
 
   @override
   Widget build(BuildContext context) {
+    print('build() ChartBar');
     return LayoutBuilder(builder: ((ctx, constraints) {
       // передает ограничения виджета которые можно использовать(его размеры ширина и высота)
       return Column(
