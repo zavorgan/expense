@@ -15,10 +15,8 @@ class TransacionList extends StatelessWidget {
     print('build() TansactionList');
     return transactions.isEmpty //если пустой выводим первое условие
         ? LayoutBuilder(builder: (ctx, constraints) {
-<<<<<<< HEAD
             //ипользуем допустимы размер
-=======
->>>>>>> 875169b011c4b786d9d054c2bb1c48d05beedc2a
+
             return Column(
               children: [
                 Text(
