@@ -111,6 +111,7 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  //
   void _startAddNewTransaction(BuildContext ctx) {
     showModalBottomSheet(
       context: ctx,
@@ -128,6 +129,59 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _userTransactions.removeWhere((tx) => tx.id == id);
     });
+  }
+
+  //создаем отображение для горизонтального
+  List<Widget> _buildLandscapeContent(
+    MediaQueryData mediaQuery,
+    AppBar appBar,
+    Widget txWidget,
+  ) {
+    return [
+      Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text('Show Chart'),
+          Switch.adaptive(
+            value: _showChart,
+            onChanged: (val) {
+              setState(() {
+                _showChart = val;
+              });
+            },
+          ),
+        ],
+      ),
+      _showChart
+          ? Container(
+              //высота = запрос размера экрана - аппбар - строка состояния(системная панель) и делить на процент
+              height: (mediaQuery.size.height -
+                      appBar.preferredSize.height -
+                      mediaQuery.padding.top) *
+                  0.7,
+              child: Chart(_recentTransactions),
+            )
+          : txWidget
+    ];
+  }
+
+  //создаем отображение для вертикального
+  List<Widget> _buildPortraitContent(
+    MediaQueryData mediaQuery,
+    AppBar appBar,
+    Widget txWidget,
+  ) {
+    return [
+      Container(
+        //высота = запрос размера экрана - аппбар - строка состояния(системная панель) и делить на процент
+        height: (mediaQuery.size.height -
+                appBar.preferredSize.height -
+                mediaQuery.padding.top) *
+            0.3,
+        child: Chart(_recentTransactions),
+      ),
+      txWidget
+    ];
   }
 
   @override
@@ -162,49 +216,22 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
-          // mainAxisAlignment: MainAxisAlignment.spaceAround,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            //если горизонт вызываем
             if (isLandscape)
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text('Show Chart'),
-                  Switch.adaptive(
-                    value: _showChart,
-                    onChanged: (val) {
-                      setState(() {
-                        _showChart = val;
-                      });
-                    },
-                  ),
-                ],
+              ..._buildLandscapeContent(
+                mediaQuery,
+                appBar,
+                txWidget,
               ),
-            //если не горизонт отобразть
+            //если не горизонт вызываем
             if (!isLandscape)
-              Container(
-                //высота = запрос размера экрана - аппбар - строка состояния(системная панель) и делить на процент
-                height: (mediaQuery.size.height -
-                        appBar.preferredSize.height -
-                        mediaQuery.padding.top) *
-                    0.3,
-                child: Chart(_recentTransactions),
+              ..._buildPortraitContent(
+                mediaQuery,
+                appBar,
+                txWidget,
               ),
-            //если не горизонт отобразть
-            if (!isLandscape) txWidget,
-            //если горизонт отобразть
-            if (isLandscape)
-              _showChart
-                  ? Container(
-                      //высота = запрос размера экрана - аппбар - строка состояния(системная панель) и делить на процент
-                      height: (mediaQuery.size.height -
-                              appBar.preferredSize.height -
-                              mediaQuery.padding.top) *
-                          0.7,
-                      child: Chart(_recentTransactions),
-                    )
-                  : txWidget, //передаем чарт за последнюю неделю
-            //передаем все тразации
           ],
         ),
       ),
