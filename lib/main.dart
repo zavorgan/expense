@@ -61,7 +61,7 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   // String titleInput;
   // final titleController = TextEditingController();
   // final amountController = TextEditingController();
@@ -82,6 +82,26 @@ class _MyHomePageState extends State<MyHomePage> {
   ];
 
   bool _showChart = false;
+
+  // didChangeAppLifecycleState
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    print('Current state = $state');
+  }
 
   List<Transaction> get _recentTransactions {
     //переменная последние транзакции
@@ -183,6 +203,11 @@ class _MyHomePageState extends State<MyHomePage> {
       txWidget
     ];
   }
+
+  //изменение аппбар в зависимости от ОС
+  // Widget _buidAppBar() {
+  //   return
+  // }
 
   @override
   Widget build(BuildContext context) {
